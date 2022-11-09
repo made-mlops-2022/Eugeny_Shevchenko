@@ -1,0 +1,8 @@
+# s3 link https://3530385.hb.bizmrg.com/heart_cleveland_upload.csv
+#7DJ4ANPxbhDfQhZX63qQo1
+#2QZAWdqk7MQBaLTb3aLRuXqnq592a7pX2tjusgSPX6FT
+
+downloading_params:
+  s3_path: "https://3530385.hb.bizmrg.com/heart_cleveland_upload.csv"
+  output_path: "data/raw/"
+  raw_filename: "heart_cleveland_upload.csv"

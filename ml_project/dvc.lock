@@ -1,0 +1,15 @@
+schema: '2.0'
+stages:
+  download_data:
+    cmd: python src/data/load_raw_data_from_s3.py configs/data_load.yaml
+    deps:
+    - path: configs/data_load.yaml
+      md5: 5ecbd82a9b615d79af261e51c6ad3863
+      size: 299
+    - path: src/data/load_raw_data_from_s3.py
+      md5: 922920b29c85de0ef9e7e3345c00f85a
+      size: 588
+    outs:
+    - path: data/raw/heart_cleveland_upload.csv
+      md5: b93588fad71797bd3b72bc8ce2c52c43
+      size: 11062
