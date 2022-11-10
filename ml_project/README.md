@@ -54,4 +54,26 @@ Project Organization
 
 --------
 
+Installation: 
+~~~
+python -m venv .venv
+source .venv/bin/activate
+pip install --upgrate pip
+pip install -r requirements.txt
+~~~
+
+Usage:
+~~~
+dvc repro
+~~~
+
+or 
+
+~~~
+#train
+ python src/train_pipeline.py configs/train_config.yaml  
+#predict
+ python src/predict_pipeline.py configs/train_config.yaml data/predictions/predictions_knn.csv  
+~~~
+
 <p><small>Project based on the <a target="_blank" href="https://drivendata.github.io/cookiecutter-data-science/">cookiecutter data science project template</a>. #cookiecutterdatascience</small></p>
