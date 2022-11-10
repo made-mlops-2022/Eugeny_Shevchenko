@@ -1,15 +1,128 @@
 schema: '2.0'
 stages:
   download_data:
-    cmd: python src/data/load_raw_data_from_s3.py configs/data_load.yaml
+    cmd: python src/data/load_raw_data_from_s3.py configs/train_config_rf.yaml
     deps:
-    - path: configs/data_load.yaml
-      md5: 5ecbd82a9b615d79af261e51c6ad3863
-      size: 299
+    - path: configs/train_config.yaml
+      md5: 1ecc4aad60b91dee94b1e284b109dff0
+      size: 778
     - path: src/data/load_raw_data_from_s3.py
-      md5: 922920b29c85de0ef9e7e3345c00f85a
-      size: 588
+      md5: 14ec44f682e98cbd96afdca181c0caed
+      size: 675
     outs:
     - path: data/raw/heart_cleveland_upload.csv
       md5: b93588fad71797bd3b72bc8ce2c52c43
       size: 11062
+  process_data:
+    cmd: python src/data/process_features.py configs/train_config.yaml data/interim/train_heart_cleveland_upload.csv
+      data/interim/test_heart_cleveland_upload.csv
+    deps:
+    - path: configs/train_config.yaml
+      md5: 1ecc4aad60b91dee94b1e284b109dff0
+      size: 778
+    - path: data/interim/test_heart_cleveland_upload.csv
+      md5: 55d454ad43d91bfcf98a180bac9421af
+      size: 2302
+    - path: data/interim/train_heart_cleveland_upload.csv
+      md5: 9c352c29b0ec149f97de374ab46cc3d9
+      size: 8843
+    - path: src/data/process_features.py
+      md5: b6af17e6d1848da61a84dfcfcb656cef
+      size: 1672
+    outs:
+    - path: data/processed/test_heart_cleveland_upload.csv
+      md5: 8333eaa00b865e4e4d0bd1fae4ccf02c
+      size: 7809
+    - path: data/processed/train_heart_cleveland_upload.csv
+      md5: 6da6bab05c85ca52148025d280fb2ade
+      size: 30768
+    - path: models/encoder.pkl
+      md5: 9f4dd3ec11debe0e4e806af15881618a
+      size: 2209
+  split_data:
+    cmd: python src/data/split_data.py configs/train_config.yaml data/raw/heart_cleveland_upload.csv
+    deps:
+    - path: configs/train_config.yaml
+      md5: 1ecc4aad60b91dee94b1e284b109dff0
+      size: 778
+    - path: data/raw/heart_cleveland_upload.csv
+      md5: b93588fad71797bd3b72bc8ce2c52c43
+      size: 11062
+    - path: src/data/split_data.py
+      md5: bf64c2b181ae27a5d337cce68476f767
+      size: 1428
+    outs:
+    - path: data/interim/test_heart_cleveland_upload.csv
+      md5: 55d454ad43d91bfcf98a180bac9421af
+      size: 2302
+    - path: data/interim/train_heart_cleveland_upload.csv
+      md5: 9c352c29b0ec149f97de374ab46cc3d9
+      size: 8843
+  train model:
+    cmd: python src/models/train_model.py configs/train_config.yaml data/processed/train_heart_cleveland_upload.csv
+    deps:
+    - path: configs/train_config.yaml
+      md5: 22978de868d446b02b2874f01a00b82b
+      size: 915
+    - path: data/processed/train_heart_cleveland_upload.csv
+      md5: 6da6bab05c85ca52148025d280fb2ade
+      size: 30768
+    - path: src/models/train_model.py
+      md5: f2d8c5c5fcfa285f1b2d37c16798dabc
+      size: 2415
+    outs:
+    - path: models/model.pkl
+      md5: 64dd846be75150da40191657a5fa90e1
+      size: 27382
+  evaluate_model:
+    cmd: python src/models/eval_model.py configs/train_config.yaml data/processed/test_heart_cleveland_upload.csv
+    deps:
+    - path: configs/train_config.yaml
+      md5: 1ecc4aad60b91dee94b1e284b109dff0
+      size: 778
+    - path: models/model.pkl
+      md5: 64dd846be75150da40191657a5fa90e1
+      size: 27382
+    - path: src/models/eval_model.py
+      md5: 9b2b4b914f4f9ac1a4cf7d702acb7ef6
+      size: 1147
+    outs:
+    - path: models/metrics.json
+      md5: b1d9481a3aa67ce9f9c8bfbcaac19000
+      size: 518
+  train_model:
+    cmd: python src/models/train_model.py configs/train_config.yaml data/processed/train_heart_cleveland_upload.csv
+    deps:
+    - path: configs/train_config.yaml
+      md5: 1ecc4aad60b91dee94b1e284b109dff0
+      size: 778
+    - path: data/processed/train_heart_cleveland_upload.csv
+      md5: 6da6bab05c85ca52148025d280fb2ade
+      size: 30768
+    - path: models/encoder.pkl
+      md5: 9f4dd3ec11debe0e4e806af15881618a
+      size: 2209
+    - path: src/models/train_model.py
+      md5: e6da0e1658bb0f853c3f8ba0a21de054
+      size: 2591
+    outs:
+    - path: models/model.pkl
+      md5: 64dd846be75150da40191657a5fa90e1
+      size: 27382
+  predict_model:
+    cmd: python src/predict_pipeline.py configs/train_config.yaml data/processed/test_heart_cleveland_upload.csv
+      data/predictions/predictions_knn.csv
+    deps:
+    - path: configs/train_config.yaml
+      md5: 1ecc4aad60b91dee94b1e284b109dff0
+      size: 778
+    - path: models/model.pkl
+      md5: 64dd846be75150da40191657a5fa90e1
+      size: 27382
+    - path: src/predict_pipeline.py
+      md5: 308ea52e57b0d9da2ff3f01c6af4fc19
+      size: 1531
+    outs:
+    - path: data/predictions/predictions_knn.csv
+      md5: 3ee9ed828b9a0694ea6f123f636f8589
+      size: 122

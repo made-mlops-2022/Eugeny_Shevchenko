@@ -1,26 +1,57 @@
 stages:
   download_data:
-    cmd: python src/data/load_raw_data_from_s3.py configs/data_load.yaml
+    cmd: python src/data/load_raw_data_from_s3.py configs/train_config_rf.yaml
     deps:
-      - configs/data_load.yaml
+      - configs/train_config.yaml
       - src/data/load_raw_data_from_s3.py
     outs:
       - data/raw/heart_cleveland_upload.csv
-#  process data:
-#    cmd: mlops_homework_process_dataset
-#    deps:
-#      - mlops_homework/features/build_features.py
-#      - data/raw/heart_cleveland_upload.csv
-#    outs:
-#      - data/processed/heart_cleveland_upload.csv
-#      - models/encoder_baseline.pkl
-#  train model:
-#    cmd: mlops_homework_train_model
-#    deps:
-#      - data/processed/heart_cleveland_upload.csv
-#      - mlops_homework/models/train_model.py
-#      - mlops_homework/models/baseline/train_baseline_model.py
-#    outs:
-#      - models/baseline.pkl
-#    params:
-#      - model
+  split_data:
+    cmd: python src/data/split_data.py configs/train_config.yaml data/raw/heart_cleveland_upload.csv
+    deps:
+      - src/data/split_data.py
+      - configs/train_config.yaml
+      - data/raw/heart_cleveland_upload.csv
+    outs:
+      - data/interim/test_heart_cleveland_upload.csv
+      - data/interim/train_heart_cleveland_upload.csv
+
+  process_data:
+    cmd: python src/data/process_features.py configs/train_config.yaml data/interim/train_heart_cleveland_upload.csv data/interim/test_heart_cleveland_upload.csv
+    deps:
+      - src/data/process_features.py
+      - configs/train_config.yaml
+      - data/interim/train_heart_cleveland_upload.csv
+      - data/interim/test_heart_cleveland_upload.csv
+    outs:
+      - data/processed/train_heart_cleveland_upload.csv
+      - data/processed/test_heart_cleveland_upload.csv
+      - models/encoder.pkl
+
+  train_model:
+    cmd: python src/models/train_model.py configs/train_config.yaml data/processed/train_heart_cleveland_upload.csv
+    deps:
+      - data/processed/train_heart_cleveland_upload.csv
+      - src/models/train_model.py
+      - configs/train_config.yaml
+      - models/encoder.pkl
+    outs:
+      - models/model.pkl
+
+  evaluate_model:
+    cmd: python src/models/eval_model.py configs/train_config.yaml data/processed/test_heart_cleveland_upload.csv
+    deps:
+      - src/models/eval_model.py
+      - configs/train_config.yaml
+      - models/model.pkl
+    outs:
+      - models/metrics.json
+
+  predict_model:
+    cmd: python src/predict_pipeline.py configs/train_config.yaml data/processed/test_heart_cleveland_upload.csv data/predictions/predictions_knn.csv
+    deps:
+      - src/predict_pipeline.py
+      - configs/train_config.yaml
+      - models/model.pkl
+    outs:
+      - data/predictions/predictions_knn.csv

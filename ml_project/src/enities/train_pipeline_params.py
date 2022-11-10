@@ -1,25 +1,22 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Optional
 
 import yaml
 from marshmallow_dataclass import class_schema
 
 from src.enities.download_params import DownloadParams
-
-
-# from .split_params import SplittingParams
-# from .feature_params import FeatureParams
-# from .train_params import TrainingParams
+from src.enities.feature_params import FeatureParams
+from src.enities.split_params import SplittingParams
+from src.enities.train_params import TrainingParams
 
 
 @dataclass()
 class TrainingPipelineParams:
-    # input_data_path: str
-    # output_model_path: str
-    # metric_path: str
-    # splitting_params: SplittingParams
-    # feature_params: FeatureParams
-    # train_params: TrainingParams
+    splitting_params: SplittingParams
+    feature_params: FeatureParams
+    train_params: TrainingParams
+    output_model_path: str = field(default="models/model.pkl")
+    metric_path: str = field(default="models/metric.pkl")
     downloading_params: Optional[DownloadParams] = None
     use_mlflow: bool = False
     mlflow_uri: str = "http://18.156.5.226/"

@@ -1,0 +1,15 @@
+artifact_uri: file:///home/evg/%D0%94%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D1%8B/ml_ops/Eugeny_Shevchenko/ml_project/mlruns/0/68e40556dc0449f3834657c0c3d689b2/artifacts
+end_time: 1668112840654
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 68e40556dc0449f3834657c0c3d689b2
+run_name: delicate-hound-558
+run_uuid: 68e40556dc0449f3834657c0c3d689b2
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1668112840648
+status: 3
+tags: []
+user_id: evg
