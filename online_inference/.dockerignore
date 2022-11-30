@@ -1,0 +1,7 @@
+.pytest_chache
+.gitignore
+data_sample.csv
+requester.py
+requirements.dev.txt
+test_main.py
+__pyache__git
