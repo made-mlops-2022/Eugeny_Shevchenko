@@ -1,0 +1,34 @@
+output_model_path: "models/model.pkl"
+metric_path: "models/metrics.json"
+downloading_params:
+  s3_path: "https://3530385.hb.bizmrg.com/heart_cleveland_upload.csv"
+  output_path: "data/raw/"
+  raw_filename: "heart_cleveland_upload.csv"
+feature_params:
+  numerical_features:
+    - "age"
+    - "trestbps"
+    - "chol"
+    - "thalach"
+    - "oldpeak"
+  categorical_features:
+    - "sex"
+    - "restecg"
+    - "exang"
+    - "slope"
+    - "ca"
+    - "thal"
+  features_to_drop:
+    - "fbs"
+  target_col: "condition"
+  transformer_path: "models/encoder.pkl"
+  processed_path: "data/processed/"
+train_params:
+  model_type: "KNeighborsClassifier"
+  n_neighbors: 10
+  weights: "distance"
+  metric: "minkowski"
+  scaler: "StandartScaler"
+splitting_params:
+  val_size: 0.2
+  random_state: 3
