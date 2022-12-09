@@ -1,5 +1,3 @@
-
-
 FROM python:3.8.15-slim-buster
 
 WORKDIR /mlflow/
